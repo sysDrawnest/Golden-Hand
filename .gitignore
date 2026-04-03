@@ -1,0 +1,22 @@
+# Node modules
+node_modules/
+frontend-react/node_modules/
+backend/node_modules/
+
+# Build outputs
+dist/
+frontend-react/dist/
+build/
+frontend-react/build/
+
+# Environment variables
+.env
+backend/.env
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
