@@ -30,6 +30,10 @@ router.post('/register', async (req, res) => {
             user: { id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role, trainingProgress: user.trainingProgress, trainingStatus: user.trainingStatus, certificateIssued: user.certificateIssued }
         })
     } catch (err) {
+        if (err.name === 'ValidationError') {
+            const messages = Object.values(err.errors).map(val => val.message);
+            return res.status(400).json({ message: messages.join(', ') });
+        }
         res.status(500).json({ message: err.message || 'Registration failed.' })
     }
 })
