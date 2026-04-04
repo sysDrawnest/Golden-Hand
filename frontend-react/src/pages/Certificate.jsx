@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Printer, ArrowLeft } from 'lucide-react'
-import axios from 'axios'
+import api from '../services/api'
 
 export default function Certificate() {
     const navigate = useNavigate()
@@ -11,10 +11,7 @@ export default function Certificate() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const token = localStorage.getItem('gh_token')
-                const res = await axios.get('/api/auth/me', {
-                    headers: { Authorization: `Bearer ${token}` }
-                })
+                const res = await api.get('/auth/me')
                 setUserData(res.data.user)
             } catch (err) {
                 console.error(err)
