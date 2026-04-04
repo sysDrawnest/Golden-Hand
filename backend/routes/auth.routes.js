@@ -51,18 +51,45 @@ router.post('/login', async (req, res) => {
         if (!isMatch) return res.status(401).json({ message: 'Invalid credentials.' })
 
         const token = signToken(user._id)
-        res.json({
+        res.status(201).json({
             token,
             user: { id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role, trainingProgress: user.trainingProgress, trainingStatus: user.trainingStatus, certificateIssued: user.certificateIssued }
         })
     } catch (err) {
-        res.status(500).json({ message: err.message || 'Login failed.' })
+        if (err.name === 'ValidationError') {
+            const messages = Object.values(err.errors).map(val => val.message);
+            return res.status(400).json({ message: messages.join(', ') });
+        }
+        res.status(500).json({ message: err.message || 'Registration failed.' })
     }
 })
 
 // GET /api/auth/me
 router.get('/me', authMiddleware, (req, res) => {
-    res.json({ user: req.user })
+    res.json({
+        user: { id: req.user._id, name: req.user.name, email: req.user.email, phone: req.user.phone, role: req.user.role, trainingProgress: req.user.trainingProgress, trainingStatus: req.user.trainingStatus, certificateIssued: req.user.certificateIssued }
+    })
+})
+
+// PUT /api/auth/me - Update user profile
+router.put('/me', authMiddleware, async (req, res) => {
+    try {
+        const { name, phone } = req.body;
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user._id,
+            { name, phone },
+            { new: true, runValidators: true }
+        );
+        res.json({
+            user: { id: updatedUser._id, name: updatedUser.name, email: updatedUser.email, phone: updatedUser.phone, role: updatedUser.role, trainingProgress: updatedUser.trainingProgress, trainingStatus: updatedUser.trainingStatus, certificateIssued: updatedUser.certificateIssued }
+        });
+    } catch (err) {
+        if (err.name === 'ValidationError') {
+            const messages = Object.values(err.errors).map(val => val.message);
+            return res.status(400).json({ message: messages.join(', ') });
+        }
+        res.status(500).json({ message: 'Profile update failed.' });
+    }
 })
 
 module.exports = router
