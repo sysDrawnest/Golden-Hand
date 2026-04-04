@@ -183,6 +183,9 @@ export default function Navbar() {
                         {user ? (
                             <>
                                 <p className="text-broto-yellow text-sm">Signed in as {user.name}</p>
+                                <Link to="/profile" onClick={handleNavClick} className="w-full text-left text-broto-yellow hover:text-white pb-2 flex items-center">
+                                    <User className="w-4 h-4 mr-2" /> Profile
+                                </Link>
                                 <button onClick={() => { logout(); setMobileOpen(false) }} className="w-full text-left text-broto-yellow hover:text-white">Logout</button>
                             </>
                         ) : (
